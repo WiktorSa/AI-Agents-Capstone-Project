@@ -1,0 +1,22 @@
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from db_agent.db_agent import get_db_agent, DBAgentPlugin
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+
+from db_agent.db_agent import get_db_agent, DBAgentPlugin
+
+import warnings
+
+# You should run it using uvicorn (see README for more details)
+warnings.filterwarnings("ignore")
+db_agent = get_db_agent()
+session_service = InMemorySessionService()
+db_runner = Runner(
+    agent=db_agent,
+    app_name="agents",
+    session_service=session_service,
+    plugins=[
+        DBAgentPlugin()
+    ]
+)
+a2a_app = to_a2a(db_agent, port=8001, runner=db_runner)
