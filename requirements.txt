@@ -1,3 +1,4 @@
 pandas==2.3.3
-google-adk==1.19.0
+google-adk==1.18.0
 a2a-sdk==0.3.19
+colorama==0.4.6

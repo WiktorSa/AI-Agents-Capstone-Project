@@ -135,6 +135,8 @@ def get_bookshop_agent():
           Publication Year: <year>
           
         - Separate each book with one blank line.
+        - After last book add one blank line
+        - End with a statement "If you want more recommendations feel free to ask"
         """,
         output_key="book_search_response",
     )

@@ -13,6 +13,7 @@ def main():
     df = df.drop("Publish Date (Month)", axis=1)
     df = df.dropna()
     df = df.reset_index(drop=True)
+    df['Authors'] = df['Authors'].apply(lambda x: x.replace("By ", ""))
     df.columns = ["TITLE", "AUTHORS", "DESCRIPTION", "CATEGORY", "PUBLISHER", "PRICE", "PUBLISH_YEAR"]
 
     print("Creating BOOKS database")

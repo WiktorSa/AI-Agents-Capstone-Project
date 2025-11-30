@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 import sys
 
 # You should run it using uvicorn (see README for more details)
+
+# Check if Gemini API key is in .env
 load_dotenv()
 if not os.getenv("GOOGLE_API_KEY"):
     print(
@@ -19,6 +21,8 @@ if not os.getenv("GOOGLE_API_KEY"):
     sys.exit()
 
 warnings.filterwarnings("ignore")
+
+# Configure a2a connection
 db_agent = get_db_agent()
 session_service = InMemorySessionService()
 db_runner = Runner(
@@ -26,7 +30,7 @@ db_runner = Runner(
     app_name="agents",
     session_service=session_service,
     plugins=[
-        DBAgentPlugin()
+        DBAgentPlugin(log_console=False)
     ]
 )
 a2a_app = to_a2a(db_agent, port=8001, runner=db_runner)

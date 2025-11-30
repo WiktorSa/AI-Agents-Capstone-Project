@@ -9,6 +9,7 @@ import asyncio
 from dotenv import load_dotenv
 
 async def main():
+    # Check if Gemini API key is in .env
     load_dotenv()
     if not os.getenv("GOOGLE_API_KEY"):
         print(
@@ -16,6 +17,7 @@ async def main():
         )
         sys.exit()
 
+    # Test bookshop agent with some random queries
     db_agent = get_db_agent()
     session_service = InMemorySessionService()
     db_runner = Runner(
@@ -46,6 +48,7 @@ async def main():
     await db_runner.run_debug(
         "I'm searching for books written by Marinkiewicz"
     )
+    
     # This query should produce nothing
     await db_runner.run_debug(
         "I'm searching for biographies written by Marinkiewicz not related to politics"
