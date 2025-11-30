@@ -41,6 +41,15 @@ This project utilizes:
 # Setup
 The project was tested on Ubuntu 24.04.3 LTS and Python 3.12.3. I cannot guarantee that the project will work on other configurations.
 
+## Clone repository
+
+Clone the repository by typing the following commands in the terminal
+
+```properties
+git clone https://github.com/WiktorSa/AI-Agents-Capstone-Project
+cd AI-Agents-Capstone-Project
+```  
+
 ## Dataset download
 [Download Books Dataset by Elvin Rustamov](https://www.kaggle.com/datasets/elvinrustam/books-dataset) and extract the .zip file  
 Create dataset folder at the project level and place BooksDatasetClean.csv in it  
