@@ -29,32 +29,32 @@ def query_books_db(
         included_authors (list[str] | None):
             A list of author last names to include in the search.  
             If None, the search is performed across all authors in the database.  
-            The list should contain up to 5 last names (e.g., ["Stepanek", "Aksyonov", "Smith"]).
+            The list should contain up to 10 last names (e.g., ["Stepanek", "Aksyonov", "Smith"]).
 
         excluded_authors (list[str] | None):
             A list of author last names to exclude from the search.  
             If None, no authors are excluded.  
-            The list should contain up to 5 last names (e.g., ["Stepanek", "Aksyonov", "Smith"]).
+            The list should contain up to 10 last names (e.g., ["Stepanek", "Aksyonov", "Smith"]).
 
         included_categories (list[str] | None):
             A list of categories to include in the search.
             If None, the search is performed across all categories in the database.  
-            The list should contain up to 5 categories (e.g., ["Biography", "Fiction"])
+            The list should contain up to 10 categories (e.g., ["Biography", "Fiction"])
 
         excluded_categories (list[str] | None):
             A list of categories to exclude from the search.
             If None, no categories are excluded.  
-            The list should contain up to 5 categories (e.g., ["Biography", "Fiction"])
+            The list should contain up to 10 categories (e.g., ["Biography", "Fiction"])
 
         included_keywords (list[str] | None):
             A list of keywords to include in the search (they will be matched to title and description of the books)
             If None, the search is performed across all keywords in the database.  
-            The list should contain up to 5 keywords (e.g., ["company", "nation"])
+            The list should contain up to 10 keywords (e.g., ["company", "nation"])
 
         excluded_keywords (list[str] | None):
             A list of keywords to exclude from the search (they will be matched to title and description of the books)
             If None, no keywords are excluded.  
-            The list should contain up to 5 keywords (e.g., ["company", "nation"])
+            The list should contain up to 10 keywords (e.g., ["company", "nation"])
 
     Returns:
         dict:
@@ -142,7 +142,7 @@ def query_books_db(
             FROM BOOKS
             {filter_part}
             ORDER BY RANDOM()
-            LIMIT 20;
+            LIMIT 10;
         """
     )
     colname = [d[0] for d in query.description]
@@ -160,19 +160,28 @@ def query_books_db(
         }
 
 class DBAgentPlugin(BasePlugin):
-    def __init__(self) -> None:
+    def __init__(self, log_level=logging.INFO, log_console=True) -> None:
         super().__init__(name="db_agent_plugin")
         os.makedirs("logs", exist_ok=True)
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(message)s",
-            handlers=[
-                logging.FileHandler("logs/db_agent_logs.log"),
-                logging.StreamHandler()
-            ]
-        )
-        self.logger = logging.getLogger()
-        self.logger.setLevel(logging.INFO)
+
+        self.logger = logging.getLogger("db_agent_logger")
+        self.logger.setLevel(log_level)
+
+        if not self.logger.handlers:
+            log_file_handler = logging.FileHandler("logs/db_agent_logs.log")
+            handlers = [log_file_handler]
+
+            if log_console:
+                console_handler = logging.StreamHandler()
+                handlers.append(console_handler)
+
+            formatter = logging.Formatter(
+                "%(asctime)s [%(levelname)s] %(message)s"
+            )
+
+            for handler in handlers:
+                handler.setFormatter(formatter)
+                self.logger.addHandler(handler)
 
         self.user_text = None
 
@@ -297,7 +306,16 @@ def get_db_agent():
         Use None for any argument you are uncertain about.
 
         3. Check the returned `status` field:
-            - If success → return the list of books immediately.
+            - If success → return the list of books immediately in a specified format
+            Book number: <number starting from 1>
+            Title: <title>
+            Authors: <authors>
+            Category: <category>
+            Summary: <30-word summary of description>
+            Publisher: <publisher>
+            Price: <price>
+            Publication Year: <year>
+
             - If error → retry with slightly relaxed arguments.
             - Retry up to 3 times total.
 
