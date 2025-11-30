@@ -6,8 +6,18 @@ from google.adk.sessions import InMemorySessionService
 from db_agent.db_agent import get_db_agent, DBAgentPlugin
 
 import warnings
+import os
+from dotenv import load_dotenv
+import sys
 
 # You should run it using uvicorn (see README for more details)
+load_dotenv()
+if not os.getenv("GOOGLE_API_KEY"):
+    print(
+        f"🔑 Authentication Error: Please make sure you have added 'GOOGLE_API_KEY' to .env file"
+    )
+    sys.exit()
+
 warnings.filterwarnings("ignore")
 db_agent = get_db_agent()
 session_service = InMemorySessionService()
